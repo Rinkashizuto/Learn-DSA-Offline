@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Master Hash Tables, Hash Functions, and Collision Resolution with interactive animations and C++ code.">
+  <title>Hashing &amp; Hash Tables — DSA Playground</title>
+
+  <!-- Prevent FOUC -->
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('dsa_playground_theme');
+        var theme = saved ? JSON.parse(saved) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch(e) {}
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../css/style.css">
+  <script defer src="../js/main.js"></script>
+  <script defer src="../js/highlight.js"></script>
+  <script defer src="../js/visualizer.js"></script>
+  <script defer src="../js/viz/hashing.js"></script>
+</head>
+<body data-topic-id="hashing">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a href="../index.html" class="brand" aria-label="DSA Playground Home">
+        <span class="brand-icon" aria-hidden="true">&lt;/&gt;</span>
+        <span>DSA Playground</span>
+      </a>
+
+      <nav aria-label="Primary Navigation">
+        <ul class="nav-links">
+          <li><a href="../index.html">Roadmap</a></li>
+          <li><a href="../big-o.html">Big-O Cheat Sheet</a></li>
+          <li>
+            <button class="theme-toggle-btn" type="button" aria-label="Toggle light/dark theme">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    
+    <header class="topic-header">
+      <div class="container">
+        <div class="topic-meta-row">
+          <span class="topic-breadcrumb">Topic 5 of 10</span>
+          <span class="badge badge-intermediate">Intermediate</span>
+          <span class="badge badge-time">25 min read</span>
+        </div>
+        <h1 class="topic-title">Hashing &amp; Hash Tables</h1>
+        <p class="topic-tagline">Lightning-fast key-value lookups with collision resolution algorithms.</p>
+      </div>
+    </header>
+
+    <div class="container">
+
+      <!-- SECTION 1: What is it? + Analogy -->
+      <section class="content-section" aria-labelledby="sec-analogy">
+        <h2 id="sec-analogy" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          1. What is Hashing?
+        </h2>
+        
+        <p style="margin-bottom: 1.25rem; font-size: 1.05rem;">
+          A <strong>Hash Table</strong> (or Hash Map) is an associative data structure that maps <strong>keys</strong> to <strong>values</strong> with an astonishing average time complexity of <strong>O(1)</strong> for search, insertion, and deletion. It works by running the key through a <strong>hash function</strong> that calculates a numerical index inside an array.
+        </p>
+
+        <div class="analogy-card">
+          <div class="analogy-title">💡 Real-Life Analogy: Coat Check at a Theater</div>
+          <p>
+            When you enter a winter theater, you hand the attendant your heavy coat (your data). They hand you a ticket with a number printed on it: <code>#42</code> (your hash index). Your coat is hung immediately on hook 42.
+          </p>
+          <p style="margin-top: 0.75rem;">
+            When you return after the show, you don't inspect all 500 coats one by one. You simply say: <em>"Here is ticket #42!"</em> The attendant walks straight to hook 42 in <strong>O(1) instant time</strong>. But what if two different people are accidentally assigned ticket 42? That is called a <strong>collision</strong>, and we must have a strategy to handle it!
+          </p>
+        </div>
+
+        <div class="callouts-grid">
+          <div class="callout-card callout-tip">
+            <div class="callout-title">1. Separate Chaining</div>
+            <p style="font-size: 0.95rem;">Every bucket in the array holds the head of a linked list. If multiple keys hash to the same bucket, they simply hang off each other as linked list nodes.</p>
+          </div>
+          <div class="callout-card callout-tip" style="border-left-color: var(--accent-primary);">
+            <div class="callout-title" style="color: var(--accent-primary);">2. Open Addressing (Linear Probing)</div>
+            <p style="font-size: 0.95rem;">All elements stay in the primary array. If bucket <code>h</code> is occupied, we check <code>(h + 1) % size</code>, <code>(h + 2) % size</code>, and so on until the next empty slot is found.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: Interactive Visualizer -->
+      <section class="content-section" aria-labelledby="sec-visualizer">
+        <h2 id="sec-visualizer" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          2. Interactive Hash Table Visualizer
+        </h2>
+        <p style="margin-bottom: 1rem; color: var(--text-secondary);">
+          Our hash function is <code>hash(key) = key % 7</code>. Insert keys (try keys with the same remainder like 8 and 15) to witness how collisions are handled!
+        </p>
+
+        <div class="viz-container" role="region" aria-label="Hash Table Visualizer Studio">
+          
+          <div class="viz-toolbar">
+            <div class="viz-input-group">
+              <label for="select-hash-strategy" style="font-size: 0.85rem; font-weight: 600;">Collision Mode:</label>
+              <select id="select-hash-strategy" class="viz-select">
+                <option value="chaining">Separate Chaining</option>
+                <option value="probing">Linear Probing</option>
+              </select>
+            </div>
+
+            <div class="viz-input-group">
+              <label for="input-insert-key" style="font-size: 0.85rem; font-weight: 600;">Key:</label>
+              <input type="number" id="input-insert-key" class="viz-input" value="22" min="1" max="99">
+              <button type="button" id="btn-op-insert" class="btn-ctrl">📥 Insert</button>
+            </div>
+
+            <div class="viz-input-group">
+              <input type="number" id="input-search-key" class="viz-input" value="8" min="1" max="99">
+              <button type="button" id="btn-op-search" class="btn-ctrl">🔍 Search</button>
+            </div>
+
+            <button type="button" id="btn-op-random" class="btn-ctrl" style="margin-left: auto;">🎲 Randomize</button>
+          </div>
+
+          <div id="viz-stage" class="viz-stage" aria-live="polite">
+            <!-- Populated dynamically by hashing.js -->
+          </div>
+
+          <div class="viz-caption-box">
+            <span class="viz-caption-icon" aria-hidden="true">ℹ️</span>
+            <span id="viz-caption-text">Ready. Choose an operation above to start the visualization.</span>
+            <div id="viz-mini-code" class="viz-mini-code" style="display: none; margin-left: auto;"></div>
+          </div>
+
+          <div class="viz-playback-bar">
+            <div class="viz-button-cluster">
+              <button type="button" id="btn-play" class="btn-ctrl">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Play
+              </button>
+              <button type="button" id="btn-step-back" class="btn-ctrl">⏮ Step Back</button>
+              <button type="button" id="btn-step-fwd" class="btn-ctrl">⏭ Step Forward</button>
+              <button type="button" id="btn-reset" class="btn-ctrl">↺ Reset</button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;">
+              <label class="code-sync-control" title="Show and synchronize active C++ code line">
+                <input type="checkbox" id="check-code-sync" checked>
+                <span>Code Sync</span>
+              </label>
+
+              <div class="speed-control">
+                <label for="slider-speed">Speed:</label>
+                <input type="range" id="slider-speed" class="speed-slider" min="0.5" max="2.5" step="0.5" value="1.0">
+                <span id="speed-value-label" style="font-family: var(--font-mono); font-size: 0.85rem;">1.0x</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SECTION 3: Complexity Table -->
+      <section class="content-section" aria-labelledby="sec-complexity">
+        <h2 id="sec-complexity" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          3. Time &amp; Space Complexity
+        </h2>
+
+        <div class="table-wrapper">
+          <table class="complexity-table">
+            <thead>
+              <tr>
+                <th>Operation</th>
+                <th>Average Case</th>
+                <th>Worst Case (All Collisions)</th>
+                <th>Space Complexity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Search (by key)</strong></td>
+                <td><span class="o-tag o-fast">O(1)</span></td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-fast">O(1)</span></td>
+              </tr>
+              <tr>
+                <td><strong>Insert (key, value)</strong></td>
+                <td><span class="o-tag o-fast">O(1)</span></td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-fast">O(1)</span></td>
+              </tr>
+              <tr>
+                <td><strong>Delete (by key)</strong></td>
+                <td><span class="o-tag o-fast">O(1)</span></td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-fast">O(1)</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="analogy-card" style="border-left-color: var(--info-color);">
+          <div class="analogy-title" style="color: var(--info-color);">🤔 Why is Worst-Case O(n)?</div>
+          <p>
+            If a terrible hash function maps <em>every single key</em> to bucket index [0], all $n$ items will end up in the exact same linked list! Searching that bucket degrades into a linear scan $O(n)$. High-quality hash functions distribute keys evenly to guarantee $O(1)$ average time.
+          </p>
+        </div>
+      </section>
+
+      <!-- SECTION 4: C++ Implementation -->
+      <section class="content-section" aria-labelledby="sec-code">
+        <h2 id="sec-code" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          4. C++17 Implementation
+        </h2>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span class="code-title">📄 hash_table.cpp</span>
+            <button type="button" class="code-copy-btn" data-target="hash-code-block">Copy Code</button>
+          </div>
+          <pre class="code-pre" id="hash-code-block">
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;list&gt;
+
+class HashTableChaining {
+private:
+    static const int TABLE_SIZE = 7;
+    std::vector&lt;std::list&lt;int&gt;&gt; table;
+
+    // Hash function: O(1)
+    int hashFunction(int key) const {
+        return std::abs(key) % TABLE_SIZE;
+    }
+
+public:
+    HashTableChaining() : table(TABLE_SIZE) {}
+
+    // 1. Insert: O(1) avg
+    void insert(int key) {
+        int bucket = hashFunction(key);
+        table[bucket].push_back(key);
+    }
+
+    // 2. Search: O(1) avg
+    bool search(int key) const {
+        int bucket = hashFunction(key);
+        for (int val : table[bucket]) {
+            if (val == key) return true;
+        }
+        return false;
+    }
+
+    // 3. Delete: O(1) avg
+    void remove(int key) {
+        int bucket = hashFunction(key);
+        table[bucket].remove(key);
+    }
+};
+          </pre>
+        </div>
+      </section>
+
+      <!-- SECTION 5: Common Mistakes & When to Use -->
+      <section class="content-section" aria-labelledby="sec-pitfalls">
+        <h2 id="sec-pitfalls" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          5. Common Mistakes &amp; When To Use
+        </h2>
+
+        <div class="callouts-grid">
+          <div class="callout-card callout-warning">
+            <div class="callout-title">⚠️ Common Beginner Mistakes</div>
+            <ul style="padding-left: 1.25rem; font-size: 0.95rem; line-height: 1.7;">
+              <li><strong>Assuming Hash Tables are Sorted:</strong> Standard hash maps (`std::unordered_map`) have no sorted order. If you need sorted keys, use a Binary Search Tree / Red-Black Tree (`std::map`).</li>
+              <li><strong>Ignoring the Load Factor ($\alpha$):</strong> As elements fill up the table ($\alpha = N / M > 0.75$), collisions spike dramatically. Production hash tables rehash and double their bucket count automatically.</li>
+              <li><strong>Primary Clustering:</strong> In linear probing, long contiguous blocks of occupied cells form, increasing search times.</li>
+            </ul>
+          </div>
+
+          <div class="callout-card callout-tip">
+            <div class="callout-title">✅ When Should You Use Hashing?</div>
+            <ul style="padding-left: 1.25rem; font-size: 0.95rem; line-height: 1.7;">
+              <li><strong>Instant Key-Value Lookups:</strong> When you need $O(1)$ lookups by name, ID, or unique string.</li>
+              <li><strong>Frequency Counters:</strong> Counting occurrences of words or numbers in a dataset.</li>
+              <li><strong>Eliminating Nested Loops:</strong> Turning $O(n^2)$ search loops into $O(n)$ single-pass lookups (e.g. the classic Two Sum algorithm).</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 6: Mini Quiz -->
+      <section class="content-section" aria-labelledby="sec-quiz">
+        <h2 id="sec-quiz" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          6. Test Your Understanding
+        </h2>
+
+        <div class="quiz-card" id="quiz-q1">
+          <div class="quiz-question">Q1: What is a "collision" in a hash table?</div>
+          <div class="quiz-options">
+            <button type="button" class="quiz-option" data-correct="false">A) The computer runs out of physical memory.</button>
+            <button type="button" class="quiz-option" data-correct="true">B) Two distinct keys produce the exact same bucket index from the hash function.</button>
+            <button type="button" class="quiz-option" data-correct="false">C) A key is deleted twice.</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card" id="quiz-q2">
+          <div class="quiz-question">Q2: What is the average time complexity of searching for a key in a hash table?</div>
+          <div class="quiz-options">
+            <button type="button" class="quiz-option" data-correct="true">A) O(1) Constant Time</button>
+            <button type="button" class="quiz-option" data-correct="false">B) O(log n)</button>
+            <button type="button" class="quiz-option" data-correct="false">C) O(n^2)</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card" id="quiz-q3">
+          <div class="quiz-question">Q3: How does Separate Chaining resolve a hash collision?</div>
+          <div class="quiz-options">
+            <button type="button" class="quiz-option" data-correct="false">A) It overwrites and discards the old value.</button>
+            <button type="button" class="quiz-option" data-correct="true">B) It stores colliding items in a linked list attached to that bucket index.</button>
+            <button type="button" class="quiz-option" data-correct="false">C) It turns the table into an array of strings.</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </section>
+
+      <!-- SECTION 7: Practice Problems -->
+      <section class="content-section" aria-labelledby="sec-practice">
+        <h2 id="sec-practice" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          7. Practice Problem Suggestions
+        </h2>
+
+        <ul class="practice-list">
+          <li class="practice-item">
+            <span class="practice-title">1. Two Sum (Hash Map Solution)</span>
+            <span class="badge badge-beginner">Easy</span>
+          </li>
+          <li class="practice-item">
+            <span class="practice-title">2. Group Anagrams</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </li>
+          <li class="practice-item">
+            <span class="practice-title">3. Subarray Sum Equals K</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </li>
+          <li class="practice-item">
+            <span class="practice-title">4. LRU Cache (Hash Map + Doubly Linked List)</span>
+            <span class="badge badge-advanced">Hard</span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- SECTION 8: Topic Navigation & Completion -->
+      <div class="topic-footer-nav">
+        <a href="queues.html" class="btn btn-secondary">← Previous: Queues</a>
+
+        <button type="button" id="btn-mark-completed" class="btn btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg>
+          Mark as Completed
+        </button>
+
+        <a href="trees.html" class="btn btn-primary">
+          Next Topic: Trees &amp; BST →
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <div>
+        <strong>DSA Playground</strong> — Built with pure HTML, CSS, and vanilla JS for offline study.
+      </div>
+      <ul class="footer-links">
+        <li><a href="../index.html">Roadmap</a></li>
+        <li><a href="../big-o.html">Big-O Cheat Sheet</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const quizCards = document.querySelectorAll('.quiz-card');
+      quizCards.forEach(function(card) {
+        const options = card.querySelectorAll('.quiz-option');
+        const feedback = card.querySelector('.quiz-feedback');
+
+        options.forEach(function(opt) {
+          opt.addEventListener('click', function() {
+            options.forEach(o => o.disabled = true);
+            const isCorrect = opt.getAttribute('data-correct') === 'true';
+            if (isCorrect) {
+              opt.classList.add('correct');
+              feedback.className = 'quiz-feedback show correct-feedback';
+              feedback.innerHTML = '<strong>✓ Correct!</strong> ' + (opt.textContent.replace(/^[A-C]\)\s*/, ''));
+            } else {
+              opt.classList.add('incorrect');
+              options.forEach(o => {
+                if (o.getAttribute('data-correct') === 'true') o.classList.add('correct');
+              });
+              feedback.className = 'quiz-feedback show incorrect-feedback';
+              feedback.innerHTML = '<strong>✗ Not quite.</strong> Take a look at the highlighted correct answer.';
+            }
+          });
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

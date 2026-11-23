@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Learn Arrays from scratch with interactive step-by-step visualizations and clean C++ code.">
+  <title>Arrays — DSA Playground</title>
+
+  <!-- Prevent FOUC -->
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('dsa_playground_theme');
+        var theme = saved ? JSON.parse(saved) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch(e) {}
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../css/style.css">
+  <script defer src="../js/main.js"></script>
+  <script defer src="../js/highlight.js"></script>
+  <script defer src="../js/visualizer.js"></script>
+  <script defer src="../js/viz/arrays.js"></script>
+</head>
+<body data-topic-id="arrays">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Global Header -->
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a href="../index.html" class="brand" aria-label="DSA Playground Home">
+        <span class="brand-icon" aria-hidden="true">&lt;/&gt;</span>
+        <span>DSA Playground</span>
+      </a>
+
+      <nav aria-label="Primary Navigation">
+        <ul class="nav-links">
+          <li><a href="../index.html">Roadmap</a></li>
+          <li><a href="../big-o.html">Big-O Cheat Sheet</a></li>
+          <li>
+            <button class="theme-toggle-btn" type="button" aria-label="Toggle light/dark theme">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content">
+    
+    <!-- Topic Header -->
+    <header class="topic-header">
+      <div class="container">
+        <div class="topic-meta-row">
+          <span class="topic-breadcrumb">Topic 1 of 10</span>
+          <span class="badge badge-beginner">Beginner</span>
+          <span class="badge badge-time">15 min read</span>
+        </div>
+        <h1 class="topic-title">Arrays</h1>
+        <p class="topic-tagline">Contiguous memory, lightning-fast index access, and the trade-offs of shifting.</p>
+      </div>
+    </header>
+
+    <div class="container">
+
+      <!-- SECTION 1: What is it? + Analogy -->
+      <section class="content-section" aria-labelledby="sec-analogy">
+        <h2 id="sec-analogy" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          1. What is an Array?
+        </h2>
+        
+        <p style="margin-bottom: 1.25rem; font-size: 1.05rem;">
+          An <strong>array</strong> is the most fundamental data structure in computer science. It is a collection of items stored in <em>contiguous</em> (unbroken, side-by-side) slots in your computer's RAM memory. Because every item has the exact same size and slots sit right next to each other, the computer can jump to any slot instantly using an <strong>index</strong> (starting at 0).
+        </p>
+
+        <div class="analogy-card">
+          <div class="analogy-title">💡 Real-Life Analogy: Numbered School Lockers</div>
+          <p>
+            Imagine a hallway with a continuous row of numbered school lockers numbered <code>[0]</code> through <code>[7]</code>. If someone says <em>"Open locker number 4"</em>, you don't need to walk from locker 0, 1, 2, and 3 first. You can walk straight to locker 4 with zero wasted time! That is why array lookups are instant <strong>O(1)</strong>.
+          </p>
+          <p style="margin-top: 0.75rem;">
+            However, imagine every locker already has a backpack in it. If a new student joins and needs locker <code>[2]</code>, what happens? Every student from locker 2 onward has to pack up and physically shift one locker to the right! That is why inserting or deleting into the middle of an array requires <strong>O(n)</strong> shifting work.
+          </p>
+        </div>
+      </section>
+
+      <!-- SECTION 2: Interactive Visualizer -->
+      <section class="content-section" aria-labelledby="sec-visualizer">
+        <h2 id="sec-visualizer" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          2. Interactive Array Visualizer
+        </h2>
+        <p style="margin-bottom: 1rem; color: var(--text-secondary);">
+          Experiment below! Try searching for a number, inserting a value into index 2, or deleting an element. Watch how elements shift to close or open memory slots.
+        </p>
+
+        <div class="viz-container" role="region" aria-label="Array Visualization Studio">
+          
+          <!-- Operation Toolbar -->
+          <div class="viz-toolbar">
+            <div class="viz-input-group">
+              <label for="input-search-val" style="font-size: 0.85rem; font-weight: 600;">Search Value:</label>
+              <input type="number" id="input-search-val" class="viz-input" value="23" min="0" max="99">
+              <button type="button" id="btn-op-search" class="btn-ctrl">🔍 Search</button>
+            </div>
+
+            <div class="viz-input-group">
+              <label for="input-insert-val" style="font-size: 0.85rem; font-weight: 600;">Insert:</label>
+              <input type="number" id="input-insert-val" class="viz-input" value="99" min="0" max="99" title="Value">
+              <span style="font-size: 0.85rem;">at index</span>
+              <input type="number" id="input-insert-idx" class="viz-input" style="width: 60px;" value="2" min="0" max="7" title="Index">
+              <button type="button" id="btn-op-insert" class="btn-ctrl">📥 Insert</button>
+            </div>
+
+            <div class="viz-input-group">
+              <label for="input-delete-idx" style="font-size: 0.85rem; font-weight: 600;">Delete index:</label>
+              <input type="number" id="input-delete-idx" class="viz-input" style="width: 60px;" value="1" min="0" max="7">
+              <button type="button" id="btn-op-delete" class="btn-ctrl">🗑️ Delete</button>
+            </div>
+
+            <button type="button" id="btn-op-random" class="btn-ctrl" style="margin-left: auto;">🎲 Randomize</button>
+          </div>
+
+          <!-- Visual Display Stage -->
+          <div id="viz-stage" class="viz-stage" aria-live="polite">
+            <!-- Populated dynamically by arrays.js -->
+          </div>
+
+          <!-- Step Caption Banner -->
+          <div class="viz-caption-box">
+            <span class="viz-caption-icon" aria-hidden="true">ℹ️</span>
+            <span id="viz-caption-text">Ready. Choose an operation above to start the visualization.</span>
+            <div id="viz-mini-code" class="viz-mini-code" style="display: none; margin-left: auto;"></div>
+          </div>
+
+          <!-- Playback Controls Bar -->
+          <div class="viz-playback-bar">
+            <div class="viz-button-cluster">
+              <button type="button" id="btn-play" class="btn-ctrl">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Play
+              </button>
+              <button type="button" id="btn-step-back" class="btn-ctrl" title="Step backward">⏮ Step Back</button>
+              <button type="button" id="btn-step-fwd" class="btn-ctrl" title="Step forward">⏭ Step Forward</button>
+              <button type="button" id="btn-reset" class="btn-ctrl" title="Reset animation">↺ Reset</button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;">
+              <label class="code-sync-control" title="Show and synchronize active C++ code line">
+                <input type="checkbox" id="check-code-sync" checked>
+                <span>Code Sync</span>
+              </label>
+
+              <div class="speed-control">
+                <label for="slider-speed">Speed:</label>
+                <input type="range" id="slider-speed" class="speed-slider" min="0.5" max="2.5" step="0.5" value="1.0">
+                <span id="speed-value-label" style="font-family: var(--font-mono); font-size: 0.85rem;">1.0x</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SECTION 3: Complexity Table -->
+      <section class="content-section" aria-labelledby="sec-complexity">
+        <h2 id="sec-complexity" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          3. Time & Space Complexity
+        </h2>
+
+        <div class="table-wrapper">
+          <table class="complexity-table">
+            <thead>
+              <tr>
+                <th>Operation</th>
+                <th>Best Case</th>
+                <th>Average Case</th>
+                <th>Worst Case</th>
+                <th>Space Complexity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Random Access (Read <code>arr[i]</code>)</strong></td>
+                <td><span class="o-tag o-fast">O(1)</span></td>
+                <td><span class="o-tag o-fast">O(1)</span></td>
+                <td><span class="o-tag o-fast">O(1)</span></td>
+                <td><span class="o-tag o-fast">O(1)</span></td>
+              </tr>
+              <tr>
+                <td><strong>Search (by value)</strong></td>
+                <td><span class="o-tag o-fast">O(1)</span> (if 1st item)</td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-slow">O(n)</span> (if absent)</td>
+                <td><span class="o-tag o-fast">O(1)</span></td>
+              </tr>
+              <tr>
+                <td><strong>Insertion (at index i)</strong></td>
+                <td><span class="o-tag o-fast">O(1)</span> (at end)</td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-slow">O(n)</span> (at index 0)</td>
+                <td><span class="o-tag o-fast">O(1)</span> auxiliary</td>
+              </tr>
+              <tr>
+                <td><strong>Deletion (at index i)</strong></td>
+                <td><span class="o-tag o-fast">O(1)</span> (at end)</td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-slow">O(n)</span> (at index 0)</td>
+                <td><span class="o-tag o-fast">O(1)</span> auxiliary</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="analogy-card" style="border-left-color: var(--info-color);">
+          <div class="analogy-title" style="color: var(--info-color);">🤔 What does Big-O mean here?</div>
+          <p>
+            <strong>O(1) (Constant Time):</strong> Takes the exact same fraction of a microsecond whether your array contains 5 items or 5 billion items. Array access is mathematical: <code>Address = BaseAddress + index * itemSize</code>.
+          </p>
+          <p style="margin-top: 0.5rem;">
+            <strong>O(n) (Linear Time):</strong> If your array has <code>n</code> items, you may have to inspect or shift all <code>n</code> items one by one. If you double the size of the array, the worst-case time doubles.
+          </p>
+        </div>
+      </section>
+
+      <!-- SECTION 4: C++ Implementation -->
+      <section class="content-section" aria-labelledby="sec-code">
+        <h2 id="sec-code" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          4. C++17 Implementation
+        </h2>
+        <p style="margin-bottom: 1rem; color: var(--text-secondary);">
+          Standard, clean C++ code for linear search, insertion, and deletion. Watch the code lines highlight as you step through animations in the visualizer above!
+        </p>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span class="code-title">📄 array_operations.cpp</span>
+            <button type="button" class="code-copy-btn" data-target="arrays-code-block">Copy Code</button>
+          </div>
+          <pre class="code-pre" id="arrays-code-block">
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+// 1. Linear Search: returns index or -1 if absent
+int linearSearch(const std::vector&lt;int&gt;&amp; arr, int target) {
+    for (size_t i = 0; i &lt; arr.size(); ++i) {
+        if (arr[i] == target) {
+            return static_cast&lt;int&gt;(i); // Found match!
+        }
+    }
+    return -1; // Target not found
+}
+
+// 2. Insert at index: shifts elements to right
+void insertAt(std::vector&lt;int&gt;&amp; arr, int val, size_t index) {
+    if (index &gt; arr.size()) return;
+    arr.push_back(0); // Allocate extra space at end
+    for (size_t j = arr.size() - 1; j &gt; index; --j) {
+        arr[j] = arr[j - 1]; // Shift rightwards
+    }
+    arr[index] = val; // Place new element
+}
+
+// 3. Delete at index: shifts elements to left
+void deleteAt(std::vector&lt;int&gt;&amp; arr, size_t index) {
+    if (index &gt;= arr.size()) return;
+    for (size_t j = index; j + 1 &lt; arr.size(); ++j) {
+        arr[j] = arr[j + 1]; // Shift leftwards
+    }
+    arr.pop_back(); // Remove vacated last slot
+}
+          </pre>
+        </div>
+      </section>
+
+      <!-- SECTION 5: Common Mistakes & When to Use -->
+      <section class="content-section" aria-labelledby="sec-pitfalls">
+        <h2 id="sec-pitfalls" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          5. Common Mistakes &amp; When To Use
+        </h2>
+
+        <div class="callouts-grid">
+          <div class="callout-card callout-warning">
+            <div class="callout-title">⚠️ Common Beginner Mistakes</div>
+            <ul style="padding-left: 1.25rem; font-size: 0.95rem; line-height: 1.7;">
+              <li><strong>Off-by-One Errors:</strong> Forgetting that arrays are zero-indexed. An array of size 5 has indices <code>0, 1, 2, 3, 4</code>. Accessing <code>arr[5]</code> is undefined behavior!</li>
+              <li><strong>Out-of-Bounds Memory Corruption:</strong> In raw C++, accessing invalid indices can read garbage memory or crash your program with a segmentation fault.</li>
+              <li><strong>Assuming Search is O(1):</strong> Knowing an item's <em>index</em> is O(1), but finding where a <em>value</em> is located requires scanning the whole array O(n).</li>
+            </ul>
+          </div>
+
+          <div class="callout-card callout-tip">
+            <div class="callout-title">✅ When Should You Use Arrays?</div>
+            <ul style="padding-left: 1.25rem; font-size: 0.95rem; line-height: 1.7;">
+              <li><strong>Known Size or Fast Random Access:</strong> When you need to read elements in random order using an index in $O(1)$ time.</li>
+              <li><strong>Cache Locality:</strong> Modern CPUs love contiguous memory! Arrays load whole cache lines at once, making them significantly faster than linked pointer structures.</li>
+              <li><strong>Appending at the End:</strong> Adding or removing elements at the very end of a dynamic array (`std::vector::push_back`) is amortized $O(1)$.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 6: Mini Quiz -->
+      <section class="content-section" aria-labelledby="sec-quiz">
+        <h2 id="sec-quiz" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          6. Test Your Understanding
+        </h2>
+
+        <!-- Question 1 -->
+        <div class="quiz-card" id="quiz-q1">
+          <div class="quiz-question">Q1: Why is accessing an array element by index (e.g., <code>arr[3]</code>) an O(1) operation?</div>
+          <div class="quiz-options">
+            <button type="button" class="quiz-option" data-correct="false">A) The CPU checks each index one by one very quickly.</button>
+            <button type="button" class="quiz-option" data-correct="true">B) Memory is contiguous, so the address is calculated directly via math: base + index * size.</button>
+            <button type="button" class="quiz-option" data-correct="false">C) Arrays store hidden pointers inside every element.</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="quiz-card" id="quiz-q2">
+          <div class="quiz-question">Q2: What is the worst-case time complexity of inserting a value at index 0 of an array with N elements?</div>
+          <div class="quiz-options">
+            <button type="button" class="quiz-option" data-correct="false">A) O(1)</button>
+            <button type="button" class="quiz-option" data-correct="false">B) O(log n)</button>
+            <button type="button" class="quiz-option" data-correct="true">C) O(n), because all N existing elements must shift right by one position.</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="quiz-card" id="quiz-q3">
+          <div class="quiz-question">Q3: If an array has 10 elements, what is the valid index of the last element?</div>
+          <div class="quiz-options">
+            <button type="button" class="quiz-option" data-correct="false">A) 10</button>
+            <button type="button" class="quiz-option" data-correct="true">B) 9 (since indexing begins at 0)</button>
+            <button type="button" class="quiz-option" data-correct="false">C) -1</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </section>
+
+      <!-- SECTION 7: Practice Problems -->
+      <section class="content-section" aria-labelledby="sec-practice">
+        <h2 id="sec-practice" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          7. Practice Problem Suggestions
+        </h2>
+        <p style="margin-bottom: 1rem; color: var(--text-secondary);">
+          Ready to code? Search for these classic beginner problems to practice your array fundamentals:
+        </p>
+
+        <ul class="practice-list">
+          <li class="practice-item">
+            <span class="practice-title">1. Two Sum</span>
+            <span class="badge badge-beginner">Easy</span>
+          </li>
+          <li class="practice-item">
+            <span class="practice-title">2. Reverse an Array In-Place</span>
+            <span class="badge badge-beginner">Easy</span>
+          </li>
+          <li class="practice-item">
+            <span class="practice-title">3. Remove Duplicates from Sorted Array</span>
+            <span class="badge badge-beginner">Easy</span>
+          </li>
+          <li class="practice-item">
+            <span class="practice-title">4. Rotate Array by K Steps</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- SECTION 8: Topic Navigation & Completion -->
+      <div class="topic-footer-nav">
+        <a href="../index.html" class="btn btn-secondary">← Back to Roadmap</a>
+
+        <button type="button" id="btn-mark-completed" class="btn btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg>
+          Mark as Completed
+        </button>
+
+        <a href="linked-lists.html" class="btn btn-primary">
+          Next Topic: Linked Lists →
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <div>
+        <strong>DSA Playground</strong> — Built with pure HTML, CSS, and vanilla JS for offline study.
+      </div>
+      <ul class="footer-links">
+        <li><a href="../index.html">Roadmap</a></li>
+        <li><a href="../big-o.html">Big-O Cheat Sheet</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- Inline Quiz Handling Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const quizCards = document.querySelectorAll('.quiz-card');
+      quizCards.forEach(function(card) {
+        const options = card.querySelectorAll('.quiz-option');
+        const feedback = card.querySelector('.quiz-feedback');
+
+        options.forEach(function(opt) {
+          opt.addEventListener('click', function() {
+            // Disable all options in this card
+            options.forEach(o => o.disabled = true);
+
+            const isCorrect = opt.getAttribute('data-correct') === 'true';
+            if (isCorrect) {
+              opt.classList.add('correct');
+              feedback.className = 'quiz-feedback show correct-feedback';
+              feedback.innerHTML = '<strong>✓ Correct!</strong> Great job. ' + (opt.textContent.replace(/^[A-C]\)\s*/, ''));
+            } else {
+              opt.classList.add('incorrect');
+              // Highlight the correct one
+              options.forEach(o => {
+                if (o.getAttribute('data-correct') === 'true') o.classList.add('correct');
+              });
+              feedback.className = 'quiz-feedback show incorrect-feedback';
+              feedback.innerHTML = '<strong>✗ Not quite.</strong> Take a look at the highlighted correct answer.';
+            }
+          });
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

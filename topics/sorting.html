@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Master Bubble, Selection, Insertion, Merge, and Quick Sort with step-by-step animations and side-by-side racing visualizers.">
+  <title>Sorting Algorithms — DSA Playground</title>
+
+  <!-- Prevent FOUC -->
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('dsa_playground_theme');
+        var theme = saved ? JSON.parse(saved) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch(e) {}
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../css/style.css">
+  <script defer src="../js/main.js"></script>
+  <script defer src="../js/highlight.js"></script>
+  <script defer src="../js/visualizer.js"></script>
+  <script defer src="../js/viz/sorting.js"></script>
+</head>
+<body data-topic-id="sorting">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a href="../index.html" class="brand" aria-label="DSA Playground Home">
+        <span class="brand-icon" aria-hidden="true">&lt;/&gt;</span>
+        <span>DSA Playground</span>
+      </a>
+
+      <nav aria-label="Primary Navigation">
+        <ul class="nav-links">
+          <li><a href="../index.html">Roadmap</a></li>
+          <li><a href="../big-o.html">Big-O Cheat Sheet</a></li>
+          <li>
+            <button class="theme-toggle-btn" type="button" aria-label="Toggle light/dark theme">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    
+    <header class="topic-header">
+      <div class="container">
+        <div class="topic-meta-row">
+          <span class="topic-breadcrumb">Topic 9 of 10</span>
+          <span class="badge badge-intermediate">Intermediate</span>
+          <span class="badge badge-time">30 min read</span>
+        </div>
+        <h1 class="topic-title">Sorting Algorithms</h1>
+        <p class="topic-tagline">Compare and race Bubble, Selection, Insertion, Merge, and Quick Sort side by side.</p>
+      </div>
+    </header>
+
+    <div class="container">
+
+      <!-- SECTION 1: What is it? + Analogy -->
+      <section class="content-section" aria-labelledby="sec-analogy">
+        <h2 id="sec-analogy" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          1. What is Sorting?
+        </h2>
+        
+        <p style="margin-bottom: 1.25rem; font-size: 1.05rem;">
+          <strong>Sorting</strong> is the process of rearranging an unordered collection of elements into a specific monotonic order (typically ascending or descending numerical or alphabetical order). Sorting is crucial because once data is sorted, searching for items drops from slow linear scan $O(n)$ down to binary search $O(\log n)$!
+        </p>
+
+        <div class="analogy-card">
+          <div class="analogy-title">💡 Real-Life Analogy: Sorting a Hand of Playing Cards</div>
+          <p>
+            When you are dealt a hand of playing cards, how do you organize them?
+          </p>
+          <ul style="padding-left: 1.25rem; margin-top: 0.5rem; line-height: 1.7;">
+            <li><strong>Insertion Sort:</strong> You hold sorted cards in your left hand. You take one new card from the right, scan your left hand, and slide it directly into its rightful slot.</li>
+            <li><strong>Selection Sort:</strong> You look through all your unsorted cards, find the absolute smallest card (the 2), and place it in the first position. Then you find the second smallest, and so on.</li>
+            <li><strong>Divide and Conquer (Merge/Quick Sort):</strong> Split the deck into two smaller piles, sort the small piles, and weave them back together.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SECTION 2: Interactive Visualizer & Side-by-Side Race -->
+      <section class="content-section" aria-labelledby="sec-visualizer">
+        <h2 id="sec-visualizer" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          2. Interactive Sorting Visualizer &amp; Algorithm Race
+        </h2>
+        <p style="margin-bottom: 1rem; color: var(--text-secondary);">
+          Step through an algorithm manually to understand every single comparison and swap, or scroll to the Race section to watch them compete side by side on identical data!
+        </p>
+
+        <!-- Step-by-step Visualizer -->
+        <div class="viz-container" role="region" aria-label="Sorting Visualizer Studio">
+          
+          <div class="viz-toolbar">
+            <div class="viz-input-group">
+              <label for="select-sort-algo" style="font-size: 0.85rem; font-weight: 600;">Algorithm:</label>
+              <select id="select-sort-algo" class="viz-select">
+                <option value="bubble">Bubble Sort — O(n²)</option>
+                <option value="selection">Selection Sort — O(n²)</option>
+                <option value="insertion">Insertion Sort — O(n²)</option>
+                <option value="quick">Quick Sort — O(n log n)</option>
+              </select>
+            </div>
+
+            <button type="button" id="btn-op-random" class="btn-ctrl" style="margin-left: auto;">🎲 Randomize Array</button>
+          </div>
+
+          <div id="viz-stage" class="viz-stage" aria-live="polite">
+            <!-- Populated dynamically by sorting.js -->
+          </div>
+
+          <div class="viz-caption-box">
+            <span class="viz-caption-icon" aria-hidden="true">ℹ️</span>
+            <span id="viz-caption-text">Ready. Choose an algorithm above and click Play or Step Forward.</span>
+            <div id="viz-mini-code" class="viz-mini-code" style="display: none; margin-left: auto;"></div>
+          </div>
+
+          <div class="viz-playback-bar">
+            <div class="viz-button-cluster">
+              <button type="button" id="btn-play" class="btn-ctrl">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Play
+              </button>
+              <button type="button" id="btn-step-back" class="btn-ctrl">⏮ Step Back</button>
+              <button type="button" id="btn-step-fwd" class="btn-ctrl">⏭ Step Forward</button>
+              <button type="button" id="btn-reset" class="btn-ctrl">↺ Reset</button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;">
+              <label class="code-sync-control" title="Show and synchronize active C++ code line">
+                <input type="checkbox" id="check-code-sync" checked>
+                <span>Code Sync</span>
+              </label>
+
+              <div class="speed-control">
+                <label for="slider-speed">Speed:</label>
+                <input type="range" id="slider-speed" class="speed-slider" min="0.5" max="2.5" step="0.5" value="1.0">
+                <span id="speed-value-label" style="font-family: var(--font-mono); font-size: 0.85rem;">1.0x</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- SIDE-BY-SIDE RACING VISUALIZER -->
+        <div class="analogy-card" style="border-left-color: #8b5cf6; margin-top: 2rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.75rem;">
+            <div>
+              <h3 style="font-size: 1.25rem; font-weight: 800; color: #8b5cf6;">🏁 Side-by-Side Algorithm Race</h3>
+              <p style="font-size: 0.95rem; color: var(--text-secondary);">Watch all 4 algorithms race simultaneously on identical shuffled data. Observe comparison and swap counters in real time!</p>
+            </div>
+            <button type="button" id="btn-start-race" class="btn btn-primary">
+              🚀 Start Algorithm Race!
+            </button>
+          </div>
+
+          <div id="viz-race-container">
+            <!-- Populated dynamically by sorting.js -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- SECTION 3: Complexity Table -->
+      <section class="content-section" aria-labelledby="sec-complexity">
+        <h2 id="sec-complexity" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          3. Time &amp; Space Complexity Comparison
+        </h2>
+
+        <div class="table-wrapper">
+          <table class="complexity-table">
+            <thead>
+              <tr>
+                <th>Algorithm</th>
+                <th>Best Case</th>
+                <th>Average Case</th>
+                <th>Worst Case</th>
+                <th>Worst Space</th>
+                <th>Stable?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Bubble Sort</strong></td>
+                <td><span class="o-tag o-fast">O(n)</span> (if sorted)</td>
+                <td><span class="o-tag o-slow">O(n²)</span></td>
+                <td><span class="o-tag o-slow">O(n²)</span></td>
+                <td><span class="o-tag o-fast">O(1)</span></td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td><strong>Selection Sort</strong></td>
+                <td><span class="o-tag o-slow">O(n²)</span></td>
+                <td><span class="o-tag o-slow">O(n²)</span></td>
+                <td><span class="o-tag o-slow">O(n²)</span></td>
+                <td><span class="o-tag o-fast">O(1)</span></td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td><strong>Insertion Sort</strong></td>
+                <td><span class="o-tag o-fast">O(n)</span> (nearly sorted)</td>
+                <td><span class="o-tag o-slow">O(n²)</span></td>
+                <td><span class="o-tag o-slow">O(n²)</span></td>
+                <td><span class="o-tag o-fast">O(1)</span></td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td><strong>Merge Sort</strong></td>
+                <td><span class="o-tag o-medium">O(n log n)</span></td>
+                <td><span class="o-tag o-medium">O(n log n)</span></td>
+                <td><span class="o-tag o-medium">O(n log n)</span></td>
+                <td><span class="o-tag o-medium">O(n)</span> auxiliary</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td><strong>Quick Sort</strong></td>
+                <td><span class="o-tag o-medium">O(n log n)</span></td>
+                <td><span class="o-tag o-medium">O(n log n)</span></td>
+                <td><span class="o-tag o-slow">O(n²)</span> (bad pivot)</td>
+                <td><span class="o-tag o-fast">O(log n)</span></td>
+                <td>No</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 4: C++ Implementation -->
+      <section class="content-section" aria-labelledby="sec-code">
+        <h2 id="sec-code" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          4. C++17 Implementation
+        </h2>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span class="code-title">📄 sorting_algorithms.cpp</span>
+            <button type="button" class="code-copy-btn" data-target="sorting-code-block">Copy Code</button>
+          </div>
+          <pre class="code-pre" id="sorting-code-block">
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+
+// 1. Bubble Sort: O(n^2)
+void bubbleSort(std::vector&lt;int&gt;&amp; arr) {
+    size_t n = arr.size();
+    for (size_t i = 0; i + 1 &lt; n; ++i) {
+        for (size_t j = 0; j + i + 1 &lt; n; ++j) {
+            if (arr[j] &gt; arr[j + 1]) {
+                std::swap(arr[j], arr[j + 1]);
+            }
+        }
+    }
+}
+
+// 2. Selection Sort: O(n^2)
+void selectionSort(std::vector&lt;int&gt;&amp; arr) {
+    size_t n = arr.size();
+    for (size_t i = 0; i + 1 &lt; n; ++i) {
+        size_t minIdx = i;
+        for (size_t j = i + 1; j &lt; n; ++j) {
+            if (arr[j] &lt; arr[minIdx]) minIdx = j;
+        }
+        std::swap(arr[i], arr[minIdx]);
+    }
+}
+
+// 3. Insertion Sort: O(n^2) avg, O(n) best
+void insertionSort(std::vector&lt;int&gt;&amp; arr) {
+    for (size_t i = 1; i &lt; arr.size(); ++i) {
+        int key = arr[i];
+        int j = static_cast&lt;int&gt;(i) - 1;
+        while (j &gt;= 0 &amp;&amp; arr[j] &gt; key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+// 4. Quick Sort: O(n log n) avg
+int partition(std::vector&lt;int&gt;&amp; arr, int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+    for (int j = low; j &lt; high; ++j) {
+        if (arr[j] &lt; pivot) {
+            i++;
+            std::swap(arr[i], arr[j]);
+        }
+    }
+    std::swap(arr[i + 1], arr[high]);
+    return i + 1;
+}
+
+void quickSort(std::vector&lt;int&gt;&amp; arr, int low, int high) {
+    if (low &lt; high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+          </pre>
+        </div>
+      </section>
+
+      <!-- SECTION 5: Common Mistakes & When to Use -->
+      <section class="content-section" aria-labelledby="sec-pitfalls">
+        <h2 id="sec-pitfalls" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          5. Common Mistakes &amp; When To Use
+        </h2>
+
+        <div class="callouts-grid">
+          <div class="callout-card callout-warning">
+            <div class="callout-title">⚠️ Common Beginner Mistakes</div>
+            <ul style="padding-left: 1.25rem; font-size: 0.95rem; line-height: 1.7;">
+              <li><strong>Assuming Quick Sort is ALWAYS O(n log n):</strong> If you pick the last element as pivot on an already-sorted array, Quick Sort degrades into worst-case $O(n^2)$ recursion! (Randomized pivots solve this).</li>
+              <li><strong>Writing Bubble Sort in Production:</strong> Bubble Sort has high overhead and should only be used for teaching fundamentals. In real C++, always prefer <code>std::sort()</code> (Introsort: hybrid of Quick, Heap, and Insertion sort).</li>
+              <li><strong>Ignoring Algorithm Stability:</strong> A sort is <em>stable</em> if duplicate values keep their original relative order. Merge Sort is stable; Quick Sort and Selection Sort are not.</li>
+            </ul>
+          </div>
+
+          <div class="callout-card callout-tip">
+            <div class="callout-title">✅ When Should You Use Which?</div>
+            <ul style="padding-left: 1.25rem; font-size: 0.95rem; line-height: 1.7;">
+              <li><strong>Insertion Sort:</strong> When array size is tiny ($N < 20$) or when data is already nearly sorted (takes blazing fast $O(n)$ time).</li>
+              <li><strong>Quick Sort:</strong> Best general-purpose in-place sort with great cache locality and minimal memory overhead.</li>
+              <li><strong>Merge Sort:</strong> When guaranteed $O(n \log n)$ performance and stability are required, or when sorting linked lists.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 6: Mini Quiz -->
+      <section class="content-section" aria-labelledby="sec-quiz">
+        <h2 id="sec-quiz" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          6. Test Your Understanding
+        </h2>
+
+        <div class="quiz-card" id="quiz-q1">
+          <div class="quiz-question">Q1: Which sorting algorithm runs in linear O(n) time if the array is already sorted?</div>
+          <div class="quiz-options">
+            <button type="button" class="quiz-option" data-correct="false">A) Selection Sort</button>
+            <button type="button" class="quiz-option" data-correct="true">B) Insertion Sort (and optimized Bubble Sort)</button>
+            <button type="button" class="quiz-option" data-correct="false">C) Quick Sort</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card" id="quiz-q2">
+          <div class="quiz-question">Q2: What is the average time complexity of Quick Sort and Merge Sort?</div>
+          <div class="quiz-options">
+            <button type="button" class="quiz-option" data-correct="false">A) O(n)</button>
+            <button type="button" class="quiz-option" data-correct="true">B) O(n log n)</button>
+            <button type="button" class="quiz-option" data-correct="false">C) O(n^2)</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card" id="quiz-q3">
+          <div class="quiz-question">Q3: What does it mean for a sorting algorithm to be "stable"?</div>
+          <div class="quiz-options">
+            <button type="button" class="quiz-option" data-correct="true">A) Elements with equal keys preserve their original relative order after sorting.</button>
+            <button type="button" class="quiz-option" data-correct="false">B) It never crashes the computer.</button>
+            <button type="button" class="quiz-option" data-correct="false">C) It uses zero extra memory.</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </section>
+
+      <!-- SECTION 7: Practice Problems -->
+      <section class="content-section" aria-labelledby="sec-practice">
+        <h2 id="sec-practice" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          7. Practice Problem Suggestions
+        </h2>
+
+        <ul class="practice-list">
+          <li class="practice-item">
+            <span class="practice-title">1. Sort Colors (Dutch National Flag Algorithm)</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </li>
+          <li class="practice-item">
+            <span class="practice-title">2. Merge Intervals</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </li>
+          <li class="practice-item">
+            <span class="practice-title">3. Kth Largest Element in an Array (Quickselect)</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </li>
+          <li class="practice-item">
+            <span class="practice-title">4. Largest Number (Custom Comparator)</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- SECTION 8: Topic Navigation & Completion -->
+      <div class="topic-footer-nav">
+        <a href="graphs.html" class="btn btn-secondary">← Previous: Graphs</a>
+
+        <button type="button" id="btn-mark-completed" class="btn btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg>
+          Mark as Completed
+        </button>
+
+        <a href="searching.html" class="btn btn-primary">
+          Next Topic: Searching Algorithms →
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <div>
+        <strong>DSA Playground</strong> — Built with pure HTML, CSS, and vanilla JS for offline study.
+      </div>
+      <ul class="footer-links">
+        <li><a href="../index.html">Roadmap</a></li>
+        <li><a href="../big-o.html">Big-O Cheat Sheet</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const quizCards = document.querySelectorAll('.quiz-card');
+      quizCards.forEach(function(card) {
+        const options = card.querySelectorAll('.quiz-option');
+        const feedback = card.querySelector('.quiz-feedback');
+
+        options.forEach(function(opt) {
+          opt.addEventListener('click', function() {
+            options.forEach(o => o.disabled = true);
+            const isCorrect = opt.getAttribute('data-correct') === 'true';
+            if (isCorrect) {
+              opt.classList.add('correct');
+              feedback.className = 'quiz-feedback show correct-feedback';
+              feedback.innerHTML = '<strong>✓ Correct!</strong> ' + (opt.textContent.replace(/^[A-C]\)\s*/, ''));
+            } else {
+              opt.classList.add('incorrect');
+              options.forEach(o => {
+                if (o.getAttribute('data-correct') === 'true') o.classList.add('correct');
+              });
+              feedback.className = 'quiz-feedback show incorrect-feedback';
+              feedback.innerHTML = '<strong>✗ Not quite.</strong> Take a look at the highlighted correct answer.';
+            }
+          });
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

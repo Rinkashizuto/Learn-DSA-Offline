@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Master Trees, Binary Search Trees (BST), and Tree Traversals with interactive animations and C++ code.">
+  <title>Trees &amp; Binary Search Trees — DSA Playground</title>
+
+  <!-- Prevent FOUC -->
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('dsa_playground_theme');
+        var theme = saved ? JSON.parse(saved) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch(e) {}
+    })();
+  </script>
+
+  <link rel="stylesheet" href="../css/style.css">
+  <script defer src="../js/main.js"></script>
+  <script defer src="../js/highlight.js"></script>
+  <script defer src="../js/visualizer.js"></script>
+  <script defer src="../js/viz/trees.js"></script>
+</head>
+<body data-topic-id="trees">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a href="../index.html" class="brand" aria-label="DSA Playground Home">
+        <span class="brand-icon" aria-hidden="true">&lt;/&gt;</span>
+        <span>DSA Playground</span>
+      </a>
+
+      <nav aria-label="Primary Navigation">
+        <ul class="nav-links">
+          <li><a href="../index.html">Roadmap</a></li>
+          <li><a href="../big-o.html">Big-O Cheat Sheet</a></li>
+          <li>
+            <button class="theme-toggle-btn" type="button" aria-label="Toggle light/dark theme">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    
+    <header class="topic-header">
+      <div class="container">
+        <div class="topic-meta-row">
+          <span class="topic-breadcrumb">Topic 6 of 10</span>
+          <span class="badge badge-intermediate">Intermediate</span>
+          <span class="badge badge-time">30 min read</span>
+        </div>
+        <h1 class="topic-title">Trees &amp; BST</h1>
+        <p class="topic-tagline">Hierarchical structures, tree traversals, and logarithmic O(log n) binary search trees.</p>
+      </div>
+    </header>
+
+    <div class="container">
+
+      <!-- SECTION 1: What is it? + Analogy -->
+      <section class="content-section" aria-labelledby="sec-analogy">
+        <h2 id="sec-analogy" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+          1. What is a Tree &amp; Binary Search Tree?
+        </h2>
+        
+        <p style="margin-bottom: 1.25rem; font-size: 1.05rem;">
+          Up to this point, all our data structures were linear (flat rows of memory). A <strong>Tree</strong> is a non-linear, hierarchical data structure composed of <strong>Nodes</strong> connected by edges. The topmost node is called the <strong>Root</strong>, and nodes with no children are called <strong>Leaves</strong>.
+        </p>
+
+        <div class="analogy-card">
+          <div class="analogy-title">💡 Real-Life Analogy: Company Organizational Chart</div>
+          <p>
+            Think of a company chart. At the very top sits the CEO (the Root). The CEO manages two Vice Presidents (Left and Right children). Each Vice President manages two Directors, and down the tree it branches until you reach individual team contributors with no direct reports (the Leaves).
+          </p>
+          <p style="margin-top: 0.75rem;">
+            A <strong>Binary Search Tree (BST)</strong> adds one golden rule: <em>for every node, all values in its left subtree are smaller, and all values in its right subtree are larger</em>. At every single node, you eliminate half of the remaining tree—giving you blazing fast <strong>O(log n)</strong> search speeds!
+          </p>
+        </div>
+      </section>
+
+      <!-- SECTION 2: Interactive Visualizer -->
+      <section class="content-section" aria-labelledby="sec-visualizer">
+        <h2 id="sec-visualizer" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          2. Interactive BST Visualizer
+        </h2>
+        <p style="margin-bottom: 1rem; color: var(--text-secondary);">
+          Search for a number to watch the binary decision path (Left if smaller, Right if larger). Or run In-Order traversal to see how the tree visits nodes in sorted order!
+        </p>
+
+        <div class="viz-container" role="region" aria-label="Tree Visualizer Studio">
+          
+          <div class="viz-toolbar">
+            <div class="viz-input-group">
+              <label for="input-search-val" style="font-size: 0.85rem; font-weight: 600;">Search Value:</label>
+              <input type="number" id="input-search-val" class="viz-input" value="40" min="1" max="99">
+              <button type="button" id="btn-op-search" class="btn-ctrl">🔍 BST Search</button>
+            </div>
+
+            <div class="viz-input-group">
+              <span style="font-size: 0.85rem; font-weight: 600;">Traversals:</span>
+              <button type="button" id="btn-op-inorder" class="btn-ctrl">In-Order (Sorted)</button>
+              <button type="button" id="btn-op-preorder" class="btn-ctrl">Pre-Order</button>
+              <button type="button" id="btn-op-postorder" class="btn-ctrl">Post-Order</button>
+            </div>
+          </div>
+
+          <div id="viz-stage" class="viz-stage" aria-live="polite">
+            <!-- Populated dynamically by trees.js -->
+          </div>
+
+          <div class="viz-caption-box">
+            <span class="viz-caption-icon" aria-hidden="true">ℹ️</span>
+            <span id="viz-caption-text">Ready. Choose Search or a Traversal above to begin.</span>
+            <div id="viz-mini-code" class="viz-mini-code" style="display: none; margin-left: auto;"></div>
+          </div>
+
+          <div class="viz-playback-bar">
+            <div class="viz-button-cluster">
+              <button type="button" id="btn-play" class="btn-ctrl">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Play
+              </button>
+              <button type="button" id="btn-step-back" class="btn-ctrl">⏮ Step Back</button>
+              <button type="button" id="btn-step-fwd" class="btn-ctrl">⏭ Step Forward</button>
+              <button type="button" id="btn-reset" class="btn-ctrl">↺ Reset</button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;">
+              <label class="code-sync-control" title="Show and synchronize active C++ code line">
+                <input type="checkbox" id="check-code-sync" checked>
+                <span>Code Sync</span>
+              </label>
+
+              <div class="speed-control">
+                <label for="slider-speed">Speed:</label>
+                <input type="range" id="slider-speed" class="speed-slider" min="0.5" max="2.5" step="0.5" value="1.0">
+                <span id="speed-value-label" style="font-family: var(--font-mono); font-size: 0.85rem;">1.0x</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SECTION 3: Complexity Table -->
+      <section class="content-section" aria-labelledby="sec-complexity">
+        <h2 id="sec-complexity" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          3. Time &amp; Space Complexity
+        </h2>
+
+        <div class="table-wrapper">
+          <table class="complexity-table">
+            <thead>
+              <tr>
+                <th>Operation</th>
+                <th>Average Case (Balanced)</th>
+                <th>Worst Case (Skewed)</th>
+                <th>Space Complexity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Search (BST)</strong></td>
+                <td><span class="o-tag o-fast">O(log n)</span></td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-fast">O(h)</span> recursion stack</td>
+              </tr>
+              <tr>
+                <td><strong>Insert (BST)</strong></td>
+                <td><span class="o-tag o-fast">O(log n)</span></td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-fast">O(h)</span> recursion stack</td>
+              </tr>
+              <tr>
+                <td><strong>Delete (BST)</strong></td>
+                <td><span class="o-tag o-fast">O(log n)</span></td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-fast">O(h)</span> recursion stack</td>
+              </tr>
+              <tr>
+                <td><strong>Tree Traversals (In/Pre/Post)</strong></td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-fast">O(h)</span> recursion stack</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="analogy-card" style="border-left-color: var(--info-color);">
+          <div class="analogy-title" style="color: var(--info-color);">🤔 What does O(log n) mean?</div>
+          <p>
+            $\log_2(1,000,000) \approx 20$. In a balanced BST containing <strong>one million nodes</strong>, finding any element takes at most <strong>20 comparisons</strong>!
+          </p>
+        </div>
+      </section>
+
+      <!-- SECTION 4: C++ Implementation -->
+      <section class="content-section" aria-labelledby="sec-code">
+        <h2 id="sec-code" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          4. C++17 Implementation
+        </h2>
+
+        <div class="code-card">
+          <div class="code-header">
+            <span class="code-title">📄 bst.cpp</span>
+            <button type="button" class="code-copy-btn" data-target="tree-code-block">Copy Code</button>
+          </div>
+          <pre class="code-pre" id="tree-code-block">
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+struct TreeNode {
+    int val;
+    TreeNode* left = nullptr;
+    TreeNode* right = nullptr;
+    explicit TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+};
+
+// 1. Search in BST: O(log n) avg
+bool searchBST(TreeNode* root, int target) {
+    if (root == nullptr) return false;
+    if (root-&gt;val == target) return true;
+    if (target &lt; root-&gt;val) {
+        return searchBST(root-&gt;left, target);
+    } else {
+        return searchBST(root-&gt;right, target);
+    }
+}
+
+// 2. Traversals: O(n) visits all nodes
+void inorder(TreeNode* root) {
+    if (root == nullptr) return;
+    inorder(root-&gt;left);
+    std::cout &lt;&lt; root-&gt;val &lt;&lt; " "; // Left -&gt; Root -&gt; Right (Sorted!)
+    inorder(root-&gt;right);
+}
+
+void preorder(TreeNode* root) {
+    if (root == nullptr) return;
+    std::cout &lt;&lt; root-&gt;val &lt;&lt; " "; // Root -&gt; Left -&gt; Right
+    preorder(root-&gt;left);
+    preorder(root-&gt;right);
+}
+
+void postorder(TreeNode* root) {
+    if (root == nullptr) return;
+    postorder(root-&gt;left);
+    postorder(root-&gt;right);
+    std::cout &lt;&lt; root-&gt;val &lt;&lt; " "; // Left -&gt; Right -&gt; Root
+}
+          </pre>
+        </div>
+      </section>
+
+      <!-- SECTION 5: Common Mistakes & When to Use -->
+      <section class="content-section" aria-labelledby="sec-pitfalls">
+        <h2 id="sec-pitfalls" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          5. Common Mistakes &amp; When To Use
+        </h2>
+
+        <div class="callouts-grid">
+          <div class="callout-card callout-warning">
+            <div class="callout-title">⚠️ Common Beginner Mistakes</div>
+            <ul style="padding-left: 1.25rem; font-size: 0.95rem; line-height: 1.7;">
+              <li><strong>The Skewed Tree Trap:</strong> If you insert already sorted data (e.g. 1, 2, 3, 4, 5) into a naive BST, each node becomes a right child. The tree turns into a linked list and search degrades from $O(\log n)$ to $O(n)$! (Self-balancing trees like AVL or Red-Black trees fix this).</li>
+              <li><strong>Missing Recursive Base Cases:</strong> Always verify <code>if (root == nullptr) return;</code> first, or your recursive functions will crash with stack overflow.</li>
+            </ul>
+          </div>
+
+          <div class="callout-card callout-tip">
+            <div class="callout-title">✅ When Should You Use Trees?</div>
+            <ul style="padding-left: 1.25rem; font-size: 0.95rem; line-height: 1.7;">
+              <li><strong>Ordered Range Queries:</strong> Finding all values between 20 and 50 is fast and straightforward in a BST.</li>
+              <li><strong>File Systems &amp; DOM:</strong> Directory folders containing subfolders and files naturally form hierarchical trees.</li>
+              <li><strong>Auto-Complete &amp; Dictionaries:</strong> Prefix trees (Tries) allow fast prefix-based string searches.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 6: Mini Quiz -->
+      <section class="content-section" aria-labelledby="sec-quiz">
+        <h2 id="sec-quiz" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          6. Test Your Understanding
+        </h2>
+
+        <div class="quiz-card" id="quiz-q1">
+          <div class="quiz-question">Q1: Which tree traversal visits nodes in strictly sorted ascending order in a BST?</div>
+          <div class="quiz-options">
+            <button type="button" class="quiz-option" data-correct="false">A) Pre-Order (Root, Left, Right)</button>
+            <button type="button" class="quiz-option" data-correct="true">B) In-Order (Left, Root, Right)</button>
+            <button type="button" class="quiz-option" data-correct="false">C) Post-Order (Left, Right, Root)</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card" id="quiz-q2">
+          <div class="quiz-question">Q2: In a BST, where would a new value smaller than the root node always be placed?</div>
+          <div class="quiz-options">
+            <button type="button" class="quiz-option" data-correct="true">A) Somewhere in the left subtree</button>
+            <button type="button" class="quiz-option" data-correct="false">B) In the right subtree</button>
+            <button type="button" class="quiz-option" data-correct="false">C) Replaces the root node immediately</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+
+        <div class="quiz-card" id="quiz-q3">
+          <div class="quiz-question">Q3: What causes a BST's search time to degrade from O(log n) down to worst-case O(n)?</div>
+          <div class="quiz-options">
+            <button type="button" class="quiz-option" data-correct="false">A) The values are too large.</button>
+            <button type="button" class="quiz-option" data-correct="true">B) The tree becomes degenerate/skewed into a straight line (like inserting already sorted data).</button>
+            <button type="button" class="quiz-option" data-correct="false">C) Trees cannot store numbers.</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </section>
+
+      <!-- SECTION 7: Practice Problems -->
+      <section class="content-section" aria-labelledby="sec-practice">
+        <h2 id="sec-practice" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          7. Practice Problem Suggestions
+        </h2>
+
+        <ul class="practice-list">
+          <li class="practice-item">
+            <span class="practice-title">1. Maximum Depth of Binary Tree</span>
+            <span class="badge badge-beginner">Easy</span>
+          </li>
+          <li class="practice-item">
+            <span class="practice-title">2. Invert / Flip a Binary Tree</span>
+            <span class="badge badge-beginner">Easy</span>
+          </li>
+          <li class="practice-item">
+            <span class="practice-title">3. Validate Binary Search Tree</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </li>
+          <li class="practice-item">
+            <span class="practice-title">4. Lowest Common Ancestor in a BST</span>
+            <span class="badge badge-intermediate">Medium</span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- SECTION 8: Topic Navigation & Completion -->
+      <div class="topic-footer-nav">
+        <a href="hashing.html" class="btn btn-secondary">← Previous: Hashing</a>
+
+        <button type="button" id="btn-mark-completed" class="btn btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg>
+          Mark as Completed
+        </button>
+
+        <a href="heaps.html" class="btn btn-primary">
+          Next Topic: Heaps &amp; Priority Queues →
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <div>
+        <strong>DSA Playground</strong> — Built with pure HTML, CSS, and vanilla JS for offline study.
+      </div>
+      <ul class="footer-links">
+        <li><a href="../index.html">Roadmap</a></li>
+        <li><a href="../big-o.html">Big-O Cheat Sheet</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const quizCards = document.querySelectorAll('.quiz-card');
+      quizCards.forEach(function(card) {
+        const options = card.querySelectorAll('.quiz-option');
+        const feedback = card.querySelector('.quiz-feedback');
+
+        options.forEach(function(opt) {
+          opt.addEventListener('click', function() {
+            options.forEach(o => o.disabled = true);
+            const isCorrect = opt.getAttribute('data-correct') === 'true';
+            if (isCorrect) {
+              opt.classList.add('correct');
+              feedback.className = 'quiz-feedback show correct-feedback';
+              feedback.innerHTML = '<strong>✓ Correct!</strong> ' + (opt.textContent.replace(/^[A-C]\)\s*/, ''));
+            } else {
+              opt.classList.add('incorrect');
+              options.forEach(o => {
+                if (o.getAttribute('data-correct') === 'true') o.classList.add('correct');
+              });
+              feedback.className = 'quiz-feedback show incorrect-feedback';
+              feedback.innerHTML = '<strong>✗ Not quite.</strong> Take a look at the highlighted correct answer.';
+            }
+          });
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
