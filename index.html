@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Master Data Structures and Algorithms through beginner-friendly interactive visualizations and C++ code. Works 100% offline.">
+  <title>DSA Playground — Interactive Data Structures & Algorithms</title>
+  
+  <!-- Critical inline theme initializer to prevent FOUC (Flash of Unstyled Content) -->
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('dsa_playground_theme');
+        var theme = saved ? JSON.parse(saved) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch(e) {}
+    })();
+  </script>
+
+  <link rel="stylesheet" href="css/style.css">
+  <script defer src="js/main.js"></script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Global Header -->
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a href="index.html" class="brand" aria-label="DSA Playground Home">
+        <span class="brand-icon" aria-hidden="true">&lt;/&gt;</span>
+        <span>DSA Playground</span>
+      </a>
+
+      <nav aria-label="Primary Navigation">
+        <ul class="nav-links">
+          <li><a href="index.html" class="active">Roadmap</a></li>
+          <li><a href="big-o.html">Big-O Cheat Sheet</a></li>
+          <li>
+            <button class="theme-toggle-btn" type="button" aria-label="Toggle light/dark theme">
+              <!-- Default placeholder SVG, populated by main.js -->
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content">
+    
+    <!-- Hero Section -->
+    <section class="hero-section" aria-labelledby="hero-title">
+      <div class="container">
+        <div class="hero-badge">
+          <span aria-hidden="true">🚀</span> 100% Offline • Zero Dependencies • Visual Learning
+        </div>
+        <h1 id="hero-title" class="hero-title">
+          Learn Data Structures & Algorithms<br>
+          <span class="gradient-text">Visually, Step-by-Step</span>
+        </h1>
+        <p class="hero-subtitle">
+          Designed specifically for complete beginners. No complex math jargon. Understand how computer memory works through interactive animations and clean, beginner-friendly C++17 code.
+        </p>
+      </div>
+    </section>
+
+    <!-- How To Use Section -->
+    <section class="how-to-use-section" aria-labelledby="how-to-title">
+      <div class="container">
+        <h2 id="how-to-title" class="section-title">How To Use This Playground</h2>
+        <p class="section-subtitle">A proven 4-step learning loop built for intuition and retention.</p>
+
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-num" aria-hidden="true">1</div>
+            <h3>Real-Life Analogy</h3>
+            <p>Start with everyday mental models—like arrays as numbered lockers or stacks as piles of cafeteria plates.</p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num" aria-hidden="true">2</div>
+            <h3>Play With Visuals</h3>
+            <p>Insert, delete, and search elements. Step forward and backward to see pointers and memory swap in real time.</p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num" aria-hidden="true">3</div>
+            <h3>Study Pure C++</h3>
+            <p>Read clean, standard C++17 implementations with step-by-step line highlighting matched to the visualizer.</p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num" aria-hidden="true">4</div>
+            <h3>Test Yourself</h3>
+            <p>Take instant 3-question mini quizzes to solidify your knowledge and track your progress along the roadmap.</p>
+          </div>
+        </div>
+
+        <!-- Learner Progress Dashboard Card -->
+        <div class="progress-card" role="region" aria-label="Learning Progress">
+          <div class="progress-info">
+            <div class="progress-title-row">
+              <span class="progress-title">Your Learning Journey</span>
+              <span id="roadmap-progress-text" class="progress-percent">0%</span>
+            </div>
+            <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+              <div id="roadmap-progress-fill" class="progress-fill"></div>
+            </div>
+            <div class="progress-meta">
+              <span id="roadmap-progress-count">0 of 10 topics completed</span>
+              <button id="btn-reset-progress" class="btn-text" type="button">Reset progress</button>
+            </div>
+          </div>
+          <div class="progress-actions">
+            <a id="btn-continue-learning" href="topics/arrays.html" class="btn btn-primary">
+              Start Learning: Arrays →
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Visual Vertical Roadmap -->
+    <section class="roadmap-section" aria-labelledby="roadmap-title">
+      <div class="container">
+        <h2 id="roadmap-title" class="section-title">Learning Roadmap</h2>
+        <p class="section-subtitle">Follow this sequence from fundamental linear memory to advanced non-linear networks.</p>
+
+        <div class="roadmap-container">
+          
+          <!-- Node 1: Arrays -->
+          <article class="roadmap-item" id="roadmap-item-arrays">
+            <div class="roadmap-node" aria-hidden="true">
+              <span class="node-num">1</span>
+              <span class="node-tag">Topic</span>
+            </div>
+            <a href="topics/arrays.html" class="roadmap-card">
+              <div class="roadmap-card-header">
+                <h3 class="roadmap-title">1. Arrays</h3>
+                <div class="roadmap-badges">
+                  <span class="badge badge-beginner">Beginner</span>
+                  <span class="badge badge-time">15 min</span>
+                </div>
+              </div>
+              <p class="roadmap-desc">Contiguous memory blocks storing indexed elements with instant O(1) random access.</p>
+              <div class="roadmap-card-footer">
+                <span class="status-indicator">
+                  <span class="status-icon" aria-hidden="true"></span>
+                  <span class="status-text">Start Topic</span>
+                </span>
+                <span>Open Lesson →</span>
+              </div>
+            </a>
+          </article>
+
+          <!-- Node 2: Linked Lists -->
+          <article class="roadmap-item" id="roadmap-item-linked-lists">
+            <div class="roadmap-node" aria-hidden="true">
+              <span class="node-num">2</span>
+              <span class="node-tag">Topic</span>
+            </div>
+            <a href="topics/linked-lists.html" class="roadmap-card">
+              <div class="roadmap-card-header">
+                <h3 class="roadmap-title">2. Linked Lists</h3>
+                <div class="roadmap-badges">
+                  <span class="badge badge-beginner">Beginner</span>
+                  <span class="badge badge-time">20 min</span>
+                </div>
+              </div>
+              <p class="roadmap-desc">Dynamic chains of heap-allocated nodes connected via pointers (singly and doubly linked).</p>
+              <div class="roadmap-card-footer">
+                <span class="status-indicator">
+                  <span class="status-icon" aria-hidden="true"></span>
+                  <span class="status-text">Start Topic</span>
+                </span>
+                <span>Open Lesson →</span>
+              </div>
+            </a>
+          </article>
+
+          <!-- Node 3: Stacks -->
+          <article class="roadmap-item" id="roadmap-item-stacks">
+            <div class="roadmap-node" aria-hidden="true">
+              <span class="node-num">3</span>
+              <span class="node-tag">Topic</span>
+            </div>
+            <a href="topics/stacks.html" class="roadmap-card">
+              <div class="roadmap-card-header">
+                <h3 class="roadmap-title">3. Stacks</h3>
+                <div class="roadmap-badges">
+                  <span class="badge badge-beginner">Beginner</span>
+                  <span class="badge badge-time">15 min</span>
+                </div>
+              </div>
+              <p class="roadmap-desc">Last-In, First-Out (LIFO) structure with push, pop, and top inspection.</p>
+              <div class="roadmap-card-footer">
+                <span class="status-indicator">
+                  <span class="status-icon" aria-hidden="true"></span>
+                  <span class="status-text">Start Topic</span>
+                </span>
+                <span>Open Lesson →</span>
+              </div>
+            </a>
+          </article>
+
+          <!-- Node 4: Queues -->
+          <article class="roadmap-item" id="roadmap-item-queues">
+            <div class="roadmap-node" aria-hidden="true">
+              <span class="node-num">4</span>
+              <span class="node-tag">Topic</span>
+            </div>
+            <a href="topics/queues.html" class="roadmap-card">
+              <div class="roadmap-card-header">
+                <h3 class="roadmap-title">4. Queues & Deques</h3>
+                <div class="roadmap-badges">
+                  <span class="badge badge-beginner">Beginner</span>
+                  <span class="badge badge-time">20 min</span>
+                </div>
+              </div>
+              <p class="roadmap-desc">First-In, First-Out (FIFO) lines, circular buffers, and double-ended queues (deques).</p>
+              <div class="roadmap-card-footer">
+                <span class="status-indicator">
+                  <span class="status-icon" aria-hidden="true"></span>
+                  <span class="status-text">Start Topic</span>
+                </span>
+                <span>Open Lesson →</span>
+              </div>
+            </a>
+          </article>
+
+          <!-- Node 5: Hashing -->
+          <article class="roadmap-item" id="roadmap-item-hashing">
+            <div class="roadmap-node" aria-hidden="true">
+              <span class="node-num">5</span>
+              <span class="node-tag">Topic</span>
+            </div>
+            <a href="topics/hashing.html" class="roadmap-card">
+              <div class="roadmap-card-header">
+                <h3 class="roadmap-title">5. Hashing & Hash Tables</h3>
+                <div class="roadmap-badges">
+                  <span class="badge badge-intermediate">Intermediate</span>
+                  <span class="badge badge-time">25 min</span>
+                </div>
+              </div>
+              <p class="roadmap-desc">Key-value mapping with hash functions and collision resolution via separate chaining & open addressing.</p>
+              <div class="roadmap-card-footer">
+                <span class="status-indicator">
+                  <span class="status-icon" aria-hidden="true"></span>
+                  <span class="status-text">Start Topic</span>
+                </span>
+                <span>Open Lesson →</span>
+              </div>
+            </a>
+          </article>
+
+          <!-- Node 6: Trees -->
+          <article class="roadmap-item" id="roadmap-item-trees">
+            <div class="roadmap-node" aria-hidden="true">
+              <span class="node-num">6</span>
+              <span class="node-tag">Topic</span>
+            </div>
+            <a href="topics/trees.html" class="roadmap-card">
+              <div class="roadmap-card-header">
+                <h3 class="roadmap-title">6. Trees & BST</h3>
+                <div class="roadmap-badges">
+                  <span class="badge badge-intermediate">Intermediate</span>
+                  <span class="badge badge-time">30 min</span>
+                </div>
+              </div>
+              <p class="roadmap-desc">Hierarchical data representations, depth/height, In/Pre/Post traversals, and Binary Search Trees.</p>
+              <div class="roadmap-card-footer">
+                <span class="status-indicator">
+                  <span class="status-icon" aria-hidden="true"></span>
+                  <span class="status-text">Start Topic</span>
+                </span>
+                <span>Open Lesson →</span>
+              </div>
+            </a>
+          </article>
+
+          <!-- Node 7: Heaps -->
+          <article class="roadmap-item" id="roadmap-item-heaps">
+            <div class="roadmap-node" aria-hidden="true">
+              <span class="node-num">7</span>
+              <span class="node-tag">Topic</span>
+            </div>
+            <a href="topics/heaps.html" class="roadmap-card">
+              <div class="roadmap-card-header">
+                <h3 class="roadmap-title">7. Heaps & Priority Queues</h3>
+                <div class="roadmap-badges">
+                  <span class="badge badge-intermediate">Intermediate</span>
+                  <span class="badge badge-time">25 min</span>
+                </div>
+              </div>
+              <p class="roadmap-desc">Complete binary tree array layouts, min/max heap properties, heapify up/down, and priority queues.</p>
+              <div class="roadmap-card-footer">
+                <span class="status-indicator">
+                  <span class="status-icon" aria-hidden="true"></span>
+                  <span class="status-text">Start Topic</span>
+                </span>
+                <span>Open Lesson →</span>
+              </div>
+            </a>
+          </article>
+
+          <!-- Node 8: Graphs -->
+          <article class="roadmap-item" id="roadmap-item-graphs">
+            <div class="roadmap-node" aria-hidden="true">
+              <span class="node-num">8</span>
+              <span class="node-tag">Topic</span>
+            </div>
+            <a href="topics/graphs.html" class="roadmap-card">
+              <div class="roadmap-card-header">
+                <h3 class="roadmap-title">8. Graphs & Traversal</h3>
+                <div class="roadmap-badges">
+                  <span class="badge badge-advanced">Advanced</span>
+                  <span class="badge badge-time">35 min</span>
+                </div>
+              </div>
+              <p class="roadmap-desc">Networks of vertices and edges, Adjacency Matrix vs. List, Breadth-First (BFS) and Depth-First (DFS).</p>
+              <div class="roadmap-card-footer">
+                <span class="status-indicator">
+                  <span class="status-icon" aria-hidden="true"></span>
+                  <span class="status-text">Start Topic</span>
+                </span>
+                <span>Open Lesson →</span>
+              </div>
+            </a>
+          </article>
+
+          <!-- Node 9: Sorting -->
+          <article class="roadmap-item" id="roadmap-item-sorting">
+            <div class="roadmap-node" aria-hidden="true">
+              <span class="node-num">9</span>
+              <span class="node-tag">Topic</span>
+            </div>
+            <a href="topics/sorting.html" class="roadmap-card">
+              <div class="roadmap-card-header">
+                <h3 class="roadmap-title">9. Sorting Algorithms</h3>
+                <div class="roadmap-badges">
+                  <span class="badge badge-intermediate">Intermediate</span>
+                  <span class="badge badge-time">30 min</span>
+                </div>
+              </div>
+              <p class="roadmap-desc">Compare and race Bubble, Selection, Insertion, Merge, and Quick Sort side by side.</p>
+              <div class="roadmap-card-footer">
+                <span class="status-indicator">
+                  <span class="status-icon" aria-hidden="true"></span>
+                  <span class="status-text">Start Topic</span>
+                </span>
+                <span>Open Lesson →</span>
+              </div>
+            </a>
+          </article>
+
+          <!-- Node 10: Searching -->
+          <article class="roadmap-item" id="roadmap-item-searching">
+            <div class="roadmap-node" aria-hidden="true">
+              <span class="node-num">10</span>
+              <span class="node-tag">Topic</span>
+            </div>
+            <a href="topics/searching.html" class="roadmap-card">
+              <div class="roadmap-card-header">
+                <h3 class="roadmap-title">10. Searching Algorithms</h3>
+                <div class="roadmap-badges">
+                  <span class="badge badge-beginner">Beginner</span>
+                  <span class="badge badge-time">15 min</span>
+                </div>
+              </div>
+              <p class="roadmap-desc">Sequential Linear search versus divide-and-conquer Binary search with index pointers.</p>
+              <div class="roadmap-card-footer">
+                <span class="status-indicator">
+                  <span class="status-icon" aria-hidden="true"></span>
+                  <span class="status-text">Start Topic</span>
+                </span>
+                <span>Open Lesson →</span>
+              </div>
+            </a>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <div>
+        <strong>DSA Playground</strong> — Built with pure HTML, CSS, and vanilla JS for offline study.
+      </div>
+      <ul class="footer-links">
+        <li><a href="index.html">Roadmap</a></li>
+        <li><a href="big-o.html">Big-O Cheat Sheet</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>

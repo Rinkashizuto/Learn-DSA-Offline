@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Complete Big-O Complexity Cheat Sheet for Data Structures and Algorithms. Zero external dependencies.">
+  <title>Big-O Complexity Cheat Sheet — DSA Playground</title>
+
+  <!-- Prevent FOUC -->
+  <script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('dsa_playground_theme');
+        var theme = saved ? JSON.parse(saved) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch(e) {}
+    })();
+  </script>
+
+  <link rel="stylesheet" href="css/style.css">
+  <script defer src="js/main.js"></script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Global Header -->
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a href="index.html" class="brand" aria-label="DSA Playground Home">
+        <span class="brand-icon" aria-hidden="true">&lt;/&gt;</span>
+        <span>DSA Playground</span>
+      </a>
+
+      <nav aria-label="Primary Navigation">
+        <ul class="nav-links">
+          <li><a href="index.html">Roadmap</a></li>
+          <li><a href="big-o.html" class="active">Big-O Cheat Sheet</a></li>
+          <li>
+            <button class="theme-toggle-btn" type="button" aria-label="Toggle light/dark theme">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content">
+    
+    <header class="topic-header">
+      <div class="container">
+        <h1 class="topic-title">Big-O Complexity Cheat Sheet</h1>
+        <p class="topic-tagline">The definitive reference guide comparing Time and Space complexities across all standard Data Structures and Algorithms.</p>
+      </div>
+    </header>
+
+    <div class="container">
+
+      <!-- SECTION 1: Intuitive Growth Spectrum -->
+      <section class="content-section" aria-labelledby="sec-spectrum">
+        <h2 id="sec-spectrum" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          Big-O Efficiency Spectrum (Best to Worst)
+        </h2>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+          <div class="callout-card" style="border-top: 4px solid #10b981; text-align: center;">
+            <div style="font-family: var(--font-mono); font-size: 1.25rem; font-weight: 800; color: #10b981;">O(1)</div>
+            <div style="font-weight: 700; font-size: 0.9rem; margin-top: 4px;">Constant</div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Instant mathematical calculation (Array index lookup, Push/Pop stack).</p>
+          </div>
+
+          <div class="callout-card" style="border-top: 4px solid #059669; text-align: center;">
+            <div style="font-family: var(--font-mono); font-size: 1.25rem; font-weight: 800; color: #059669;">O(log n)</div>
+            <div style="font-weight: 700; font-size: 0.9rem; margin-top: 4px;">Logarithmic</div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Halves search space each step (Binary Search, Balanced BST).</p>
+          </div>
+
+          <div class="callout-card" style="border-top: 4px solid #f59e0b; text-align: center;">
+            <div style="font-family: var(--font-mono); font-size: 1.25rem; font-weight: 800; color: #f59e0b;">O(n)</div>
+            <div style="font-weight: 700; font-size: 0.9rem; margin-top: 4px;">Linear</div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Inspects or shifts all items once (Linear Search, Array insert).</p>
+          </div>
+
+          <div class="callout-card" style="border-top: 4px solid #fb923c; text-align: center;">
+            <div style="font-family: var(--font-mono); font-size: 1.25rem; font-weight: 800; color: #fb923c;">O(n log n)</div>
+            <div style="font-weight: 700; font-size: 0.9rem; margin-top: 4px;">Log-Linear</div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Divide &amp; Conquer comparison sorts (Merge Sort, Quick Sort).</p>
+          </div>
+
+          <div class="callout-card" style="border-top: 4px solid #ef4444; text-align: center;">
+            <div style="font-family: var(--font-mono); font-size: 1.25rem; font-weight: 800; color: #ef4444;">O(n²)</div>
+            <div style="font-weight: 700; font-size: 0.9rem; margin-top: 4px;">Quadratic</div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Nested loops over data (Bubble Sort, Selection Sort).</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: Master Data Structures Table -->
+      <section class="content-section" aria-labelledby="sec-ds-table">
+        <h2 id="sec-ds-table" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          1. Data Structure Operations
+        </h2>
+
+        <div class="table-wrapper">
+          <table class="complexity-table">
+            <thead>
+              <tr>
+                <th>Data Structure</th>
+                <th>Access (Index)</th>
+                <th>Search (Value)</th>
+                <th>Insertion</th>
+                <th>Deletion</th>
+                <th>Space (Worst)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Array</strong></td>
+                <td><span class="o-tag o-fast">O(1)</span></td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-fast">O(n)</span></td>
+              </tr>
+              <tr>
+                <td><strong>Singly Linked List</strong></td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-fast">O(1)</span> at head</td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-fast">O(n)</span></td>
+              </tr>
+              <tr>
+                <td><strong>Doubly Linked List</strong></td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-fast">O(1)</span> at ends</td>
+                <td><span class="o-tag o-fast">O(1)</span> with ptr</td>
+                <td><span class="o-tag o-fast">O(n)</span></td>
+              </tr>
+              <tr>
+                <td><strong>Stack (LIFO)</strong></td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-fast">O(1)</span> Push</td>
+                <td><span class="o-tag o-fast">O(1)</span> Pop</td>
+                <td><span class="o-tag o-fast">O(n)</span></td>
+              </tr>
+              <tr>
+                <td><strong>Queue (FIFO) / Deque</strong></td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-fast">O(1)</span> Enqueue</td>
+                <td><span class="o-tag o-fast">O(1)</span> Dequeue</td>
+                <td><span class="o-tag o-fast">O(n)</span></td>
+              </tr>
+              <tr>
+                <td><strong>Hash Table</strong></td>
+                <td>N/A</td>
+                <td><span class="o-tag o-fast">O(1)</span> avg / O(n) worst</td>
+                <td><span class="o-tag o-fast">O(1)</span> avg / O(n) worst</td>
+                <td><span class="o-tag o-fast">O(1)</span> avg / O(n) worst</td>
+                <td><span class="o-tag o-fast">O(n)</span></td>
+              </tr>
+              <tr>
+                <td><strong>Binary Search Tree (BST)</strong></td>
+                <td><span class="o-tag o-fast">O(log n)</span> avg</td>
+                <td><span class="o-tag o-fast">O(log n)</span> avg</td>
+                <td><span class="o-tag o-fast">O(log n)</span> avg</td>
+                <td><span class="o-tag o-fast">O(log n)</span> avg</td>
+                <td><span class="o-tag o-fast">O(n)</span></td>
+              </tr>
+              <tr>
+                <td><strong>Binary Heap (Priority Queue)</strong></td>
+                <td>N/A</td>
+                <td><span class="o-tag o-slow">O(n)</span></td>
+                <td><span class="o-tag o-fast">O(log n)</span> Push</td>
+                <td><span class="o-tag o-fast">O(log n)</span> Pop Root</td>
+                <td><span class="o-tag o-fast">O(n)</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 3: Master Sorting Table -->
+      <section class="content-section" aria-labelledby="sec-sort-table">
+        <h2 id="sec-sort-table" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          2. Array Sorting Algorithms
+        </h2>
+
+        <div class="table-wrapper">
+          <table class="complexity-table">
+            <thead>
+              <tr>
+                <th>Algorithm</th>
+                <th>Best Case</th>
+                <th>Average Case</th>
+                <th>Worst Case</th>
+                <th>Worst Space</th>
+                <th>Stable?</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Bubble Sort</strong></td>
+                <td><span class="o-tag o-fast">O(n)</span></td>
+                <td><span class="o-tag o-slow">O(n²)</span></td>
+                <td><span class="o-tag o-slow">O(n²)</span></td>
+                <td><span class="o-tag o-fast">O(1)</span></td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td><strong>Selection Sort</strong></td>
+                <td><span class="o-tag o-slow">O(n²)</span></td>
+                <td><span class="o-tag o-slow">O(n²)</span></td>
+                <td><span class="o-tag o-slow">O(n²)</span></td>
+                <td><span class="o-tag o-fast">O(1)</span></td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td><strong>Insertion Sort</strong></td>
+                <td><span class="o-tag o-fast">O(n)</span></td>
+                <td><span class="o-tag o-slow">O(n²)</span></td>
+                <td><span class="o-tag o-slow">O(n²)</span></td>
+                <td><span class="o-tag o-fast">O(1)</span></td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td><strong>Merge Sort</strong></td>
+                <td><span class="o-tag o-medium">O(n log n)</span></td>
+                <td><span class="o-tag o-medium">O(n log n)</span></td>
+                <td><span class="o-tag o-medium">O(n log n)</span></td>
+                <td><span class="o-tag o-medium">O(n)</span> auxiliary</td>
+                <td>Yes</td>
+              </tr>
+              <tr>
+                <td><strong>Quick Sort</strong></td>
+                <td><span class="o-tag o-medium">O(n log n)</span></td>
+                <td><span class="o-tag o-medium">O(n log n)</span></td>
+                <td><span class="o-tag o-slow">O(n²)</span> (bad pivot)</td>
+                <td><span class="o-tag o-fast">O(log n)</span> recursion</td>
+                <td>No</td>
+              </tr>
+              <tr>
+                <td><strong>Heap Sort</strong></td>
+                <td><span class="o-tag o-medium">O(n log n)</span></td>
+                <td><span class="o-tag o-medium">O(n log n)</span></td>
+                <td><span class="o-tag o-medium">O(n log n)</span></td>
+                <td><span class="o-tag o-fast">O(1)</span> in-place</td>
+                <td>No</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 4: Concrete Numbers Table -->
+      <section class="content-section" aria-labelledby="sec-numbers">
+        <h2 id="sec-numbers" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          3. Operations at Scale (What Big-O Feels Like)
+        </h2>
+
+        <div class="table-wrapper">
+          <table class="complexity-table">
+            <thead>
+              <tr>
+                <th>Complexity</th>
+                <th>N = 10</th>
+                <th>N = 1,000</th>
+                <th>N = 1,000,000 (1 Million)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>O(1)</strong></td>
+                <td>1 op</td>
+                <td>1 op</td>
+                <td>1 op (Instantaneous)</td>
+              </tr>
+              <tr>
+                <td><strong>O(log n)</strong></td>
+                <td>~3 ops</td>
+                <td>~10 ops</td>
+                <td><strong>~20 ops</strong> (Still instantaneous!)</td>
+              </tr>
+              <tr>
+                <td><strong>O(n)</strong></td>
+                <td>10 ops</td>
+                <td>1,000 ops</td>
+                <td><strong>1,000,000 ops</strong> (~0.001 sec)</td>
+              </tr>
+              <tr>
+                <td><strong>O(n log n)</strong></td>
+                <td>~33 ops</td>
+                <td>~10,000 ops</td>
+                <td><strong>~20,000,000 ops</strong> (~0.02 sec)</td>
+              </tr>
+              <tr>
+                <td><strong>O(n²)</strong></td>
+                <td>100 ops</td>
+                <td>1,000,000 ops</td>
+                <td><strong>1,000,000,000,000 ops</strong> (~17 minutes!)</td>
+              </tr>
+              <tr>
+                <td><strong>O(2ⁿ)</strong></td>
+                <td>1,024 ops</td>
+                <td>10³⁰¹ ops</td>
+                <td>Heat death of universe</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 5: Golden Rules of Big-O -->
+      <section class="content-section" aria-labelledby="sec-rules">
+        <h2 id="sec-rules" class="section-heading">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
+          4. Golden Rules of Big-O Calculation
+        </h2>
+
+        <div class="callouts-grid">
+          <div class="callout-card callout-tip">
+            <div class="callout-title">Rule 1: Drop All Multiplicative Constants</div>
+            <p style="font-size: 0.95rem;">
+              An algorithm doing <code>3 * n</code> operations is still <strong>O(n)</strong>. An algorithm doing <code>0.5 * n²</code> operations is still <strong>O(n²)</strong>. Big-O cares only about asymptotic growth as $n \to \infty$.
+            </p>
+          </div>
+
+          <div class="callout-card callout-tip" style="border-left-color: var(--accent-primary);">
+            <div class="callout-title" style="color: var(--accent-primary);">Rule 2: Drop Non-Dominant Terms</div>
+            <p style="font-size: 0.95rem;">
+              If an algorithm takes $n^2 + 100n + 500$ operations, you drop the lower terms and write simply <strong>O(n²)</strong>, because as $n$ reaches 1,000,000, $n^2$ accounts for $99.99\%$ of total time.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom Navigation -->
+      <div class="topic-footer-nav">
+        <a href="index.html" class="btn btn-secondary">← Back to Roadmap</a>
+        <a href="topics/arrays.html" class="btn btn-primary">Start from Topic 1: Arrays →</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <div>
+        <strong>DSA Playground</strong> — Built with pure HTML, CSS, and vanilla JS for offline study.
+      </div>
+      <ul class="footer-links">
+        <li><a href="index.html">Roadmap</a></li>
+        <li><a href="big-o.html">Big-O Cheat Sheet</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>
